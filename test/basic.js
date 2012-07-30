@@ -44,22 +44,27 @@ tap.test('incoming', function (t) {
   var str = new PassThrough
   str.pipe(ms)
 
-  var expect = ['foo', 'boo', END]
-  ms.on('data', function (c) {
-    t.equal(c, expect.shift())
-  })
+  var expect = ['foo', null, 'boo', null, null, END]
+  function test () {
+    t.equal(ms.read(), expect.shift());
+  }
   ms.on('end', function () {
     t.equal(END, expect.shift())
     t.end()
   })
   str.write('foo')
+  test();
   ms.mute()
   str.write('bar')
+  test();
   ms.unmute()
   str.write('boo')
+  test();
   ms.mute()
   str.write('blaz')
+  test();
   str.end('grelb')
+  test();
 })
 
 tap.test('outgoing', function (t) {

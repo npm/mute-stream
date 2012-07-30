@@ -1,19 +1,19 @@
-var Stream = require('stream')
+var PT = require('readable-stream/passthrough.js')
 
 module.exports = MuteStream
 
 // var out = new MuteStream(process.stdout)
 // argument auto-pipes
 function MuteStream (opts) {
-  Stream.apply(this)
+  console.error('muteStream', opts);
+  PT.apply(this)
   opts = opts || {}
-  this.writable = this.readable = true
   this.muted = false
   this.on('pipe', this._onpipe)
   this.replace = opts.replace
 }
 
-MuteStream.prototype = Object.create(Stream.prototype)
+MuteStream.prototype = Object.create(PT.prototype)
 
 Object.defineProperty(MuteStream.prototype, 'constructor', {
   value: MuteStream,
@@ -21,10 +21,12 @@ Object.defineProperty(MuteStream.prototype, 'constructor', {
 })
 
 MuteStream.prototype.mute = function () {
+  console.error('mutestream mute');
   this.muted = true
 }
 
 MuteStream.prototype.unmute = function () {
+  console.error('mutestream unmute');
   this.muted = false
 }
 
@@ -64,45 +66,16 @@ function setIsTTY (isTTY) {
 }
 
 MuteStream.prototype.pipe = function (dest) {
+  console.error('mutestream pipe');
   this._dest = dest
-  return Stream.prototype.pipe.call(this, dest)
+  return PT.prototype.pipe.call(this, dest)
 }
 
-MuteStream.prototype.pause = function () {
-  if (this._src) return this._src.pause()
-}
-
-MuteStream.prototype.resume = function () {
-  if (this._src) return this._src.resume()
-}
-
-MuteStream.prototype.write = function (c) {
+MuteStream.prototype.transform = function(c) {
+  console.error('mutestream transform', c)
   if (this.muted) {
-    if (!this.replace) return true
+    if (!this.replace) return null
     c = c.toString().replace(/./g, this.replace)
   }
-  this.emit('data', c)
+  return c
 }
-
-MuteStream.prototype.end = function (c) {
-  if (this.muted) {
-    if (c && this.replace) {
-      c = c.toString().replace(/./g, this.replace)
-    } else {
-      c = null
-    }
-  }
-  if (c) this.emit('data', c)
-  this.emit('end')
-}
-
-function proxy (fn) { return function () {
-  var d = this._dest
-  var s = this._src
-  if (d && d[fn]) d[fn].apply(d, arguments)
-  if (s && s[fn]) s[fn].apply(s, arguments)
-}}
-
-MuteStream.prototype.destroy = proxy('destroy')
-MuteStream.prototype.destroySoon = proxy('destroySoon')
-MuteStream.prototype.close = proxy('close')

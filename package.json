@@ -22,5 +22,8 @@
   ],
   "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
   "license": "BSD",
-  "description": "Bytes go in, but they don't come out (when muted)."
+  "description": "Bytes go in, but they don't come out (when muted).",
+  "dependencies": {
+    "readable-stream": "0.0.1"
+  }
 }
