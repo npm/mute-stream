@@ -80,6 +80,10 @@ Object.defineProperty(MuteStream.prototype, 'columns', {
 
 MuteStream.prototype.pipe = function (dest) {
   this._dest = dest
+  if(this._dest.isTTY){
+    this.columns = dest.columns
+    this.rows = dest.rows
+  }
   return Stream.prototype.pipe.call(this, dest)
 }
 
