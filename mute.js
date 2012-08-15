@@ -1,4 +1,4 @@
-var Stream = require('stream')
+var PassThrough = require('stream')
 
 module.exports = MuteStream
 
