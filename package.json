@@ -6,7 +6,7 @@
     "test": "test"
   },
   "devDependencies": {
-    "tap": "^1.2.0"
+    "tap": "^5.4.4"
   },
   "scripts": {
     "test": "tap test/*.js"
