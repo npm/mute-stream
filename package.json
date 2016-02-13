@@ -9,7 +9,7 @@
     "tap": "^5.4.4"
   },
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "tap test/*.js --cov"
   },
   "repository": {
     "type": "git",
