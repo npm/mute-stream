@@ -2,6 +2,9 @@
   "name": "mute-stream",
   "version": "0.0.7",
   "main": "mute.js",
+  "files": [
+    "mute.js"
+  ],
   "directories": {
     "test": "test"
   },
