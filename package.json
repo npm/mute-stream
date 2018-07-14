@@ -5,6 +5,9 @@
   "directories": {
     "test": "test"
   },
+  "files": [
+    "mute.js"
+  ],
   "devDependencies": {
     "tap": "^5.4.4"
   },
