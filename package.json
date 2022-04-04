@@ -6,7 +6,7 @@
     "test": "test"
   },
   "devDependencies": {
-    "tap": "^12.1.1"
+    "tap": "^16.0.1"
   },
   "scripts": {
     "test": "tap test/*.js --cov"
@@ -25,5 +25,11 @@
   "description": "Bytes go in, but they don't come out (when muted).",
   "files": [
     "mute.js"
-  ]
+  ],
+  "tap": {
+    "statements": 75,
+    "branches": 57,
+    "functions": 93,
+    "lines": 77
+  }
 }
