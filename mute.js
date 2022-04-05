@@ -102,7 +102,7 @@ MuteStream.prototype.write = function (c) {
     if (!this.replace) return true
     if (c.match(/^\u001b/)) {
       if(c.indexOf(this._prompt) === 0) {
-        c = c.substr(this._prompt.length);
+        c = c.slice(this._prompt.length);
         c = c.replace(/./g, this.replace);
         c = this._prompt + c;
       }
@@ -113,7 +113,7 @@ MuteStream.prototype.write = function (c) {
           c.indexOf(this._prompt) === 0) {
         this._hadControl = false
         this.emit('data', this._prompt)
-        c = c.substr(this._prompt.length)
+        c = c.slice(this._prompt.length)
       }
       c = c.toString().replace(/./g, this.replace)
     }
