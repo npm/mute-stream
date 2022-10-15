@@ -1,48 +1,42 @@
-var Stream = require('stream')
-var tap = require('tap')
-var MS = require('../mute.js')
+const Stream = require('stream')
+const tap = require('tap')
+const MS = require('../')
 
 // some marker objects
 var END = {}
 var PAUSE = {}
 var RESUME = {}
 
-function PassThrough () {
-  Stream.call(this)
-  this.readable = this.writable = true
+class PassThrough extends Stream {
+  constructor (opts) {
+    super(opts)
+    this.readable = this.writable = true
+  }
+
+  write (c) {
+    this.emit('data', c)
+    return true
+  }
+
+  end (c) {
+    if (c) {
+      this.write(c)
+    }
+    this.emit('end')
+  }
+
+  pause () {
+    this.emit('pause')
+  }
+
+  resume () {
+    this.emit('resume')
+  }
 }
 
-PassThrough.prototype = Object.create(Stream.prototype, {
-  constructor: {
-    value: PassThrough
-  },
-  write: {
-    value: function (c) {
-      this.emit('data', c)
-      return true
-    }
-  },
-  end: {
-    value: function (c) {
-      if (c) this.write(c)
-      this.emit('end')
-    }
-  },
-  pause: {
-    value: function () {
-      this.emit('pause')
-    }
-  },
-  resume: {
-    value: function () {
-      this.emit('resume')
-    }
-  }
-})
-
 tap.test('incoming', function (t) {
-  var ms = new MS
-  var str = new PassThrough
+  var ms = new MS()
+  var str = new PassThrough()
   str.pipe(ms)
 
   var expect = ['foo', 'boo', END]
@@ -64,8 +58,8 @@ tap.test('incoming', function (t) {
 })
 
 tap.test('outgoing', function (t) {
-  var ms = new MS
-  var str = new PassThrough
+  var ms = new MS()
+  var str = new PassThrough()
   ms.pipe(str)
 
   var expect = ['foo', 'boo', END]
@@ -88,12 +82,12 @@ tap.test('outgoing', function (t) {
 })
 
 tap.test('isTTY', function (t) {
-  var str = new PassThrough
+  var str = new PassThrough()
   str.isTTY = true
-  str.columns=80
-  str.rows=24
+  str.columns = 80
+  str.rows = 24
 
-  var ms = new MS
+  var ms = new MS()
   t.equal(ms.isTTY, false)
   t.equal(ms.columns, undefined)
   t.equal(ms.rows, undefined)
@@ -114,7 +108,7 @@ tap.test('isTTY', function (t) {
   t.equal(ms.columns, 80)
   t.equal(ms.rows, 24)
 
-  ms = new MS
+  ms = new MS()
   t.equal(ms.isTTY, false)
   str.pipe(ms)
   t.equal(ms.isTTY, true)
@@ -129,8 +123,8 @@ tap.test('isTTY', function (t) {
 })
 
 tap.test('pause/resume incoming', function (t) {
-  var str = new PassThrough
-  var ms = new MS
+  var str = new PassThrough()
+  var ms = new MS()
   str.on('pause', function () {
     t.equal(PAUSE, expect.shift())
   })
@@ -148,8 +142,8 @@ tap.test('pause/resume incoming', function (t) {
 })
 
 tap.test('replace with *', function (t) {
-  var str = new PassThrough
-  var ms = new MS({replace: '*'})
+  var str = new PassThrough()
+  var ms = new MS({ replace: '*' })
   str.pipe(ms)
   var expect = ['foo', '*****', 'bar', '***', 'baz', 'boo', '**', '****']
 
@@ -176,12 +170,12 @@ tap.test('replace with *', function (t) {
 })
 
 tap.test('replace with ~YARG~', function (t) {
-  var str = new PassThrough
-  var ms = new MS({replace: '~YARG~'})
+  var str = new PassThrough()
+  var ms = new MS({ replace: '~YARG~' })
   str.pipe(ms)
   var expect = ['foo', '~YARG~~YARG~~YARG~~YARG~~YARG~', 'bar',
-                '~YARG~~YARG~~YARG~', 'baz', 'boo', '~YARG~~YARG~',
-                '~YARG~~YARG~~YARG~~YARG~']
+    '~YARG~~YARG~~YARG~', 'baz', 'boo', '~YARG~~YARG~',
+    '~YARG~~YARG~~YARG~~YARG~']
 
   ms.on('data', function (c) {
     t.equal(c, expect.shift())
