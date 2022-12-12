@@ -8,7 +8,7 @@ silently dropped, rather than being passed through.
 ## Usage
 
 ```javascript
-const MuteStream = require('mute-stream')
+import MuteStream from 'mute-stream'
 
 const ms = new MuteStream(options)
 
@@ -20,7 +20,7 @@ ms.unmute()
 ms.write('baz') // writes 'baz' to stdout
 
 // can also be used to mute incoming data
-const ms = new MuteStream
+const ms = new MuteStream()
 input.pipe(ms)
 
 ms.on('data', function (c) {
