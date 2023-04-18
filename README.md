@@ -20,7 +20,7 @@ ms.unmute()
 ms.write('baz') // writes 'baz' to stdout
 
 // can also be used to mute incoming data
-const ms = new MuteStream
+const ms = new MuteStream()
 input.pipe(ms)
 
 ms.on('data', function (c) {
