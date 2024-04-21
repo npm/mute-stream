@@ -1,6 +1,6 @@
 {
   "name": "mute-stream",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "lib/index.js",
   "devDependencies": {
     "@npmcli/eslint-config": "^4.0.0",
