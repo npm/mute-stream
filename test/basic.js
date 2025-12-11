@@ -1,5 +1,6 @@
 const Stream = require('stream')
-const tap = require('tap')
+const { test } = require('node:test')
+const assert = require('node:assert')
 const MS = require('../')
 
 // some marker objects
@@ -34,18 +35,18 @@ class PassThrough extends Stream {
   }
 }
 
-tap.test('incoming', function (t) {
+test('incoming', function (t, done) {
   var ms = new MS()
   var str = new PassThrough()
   str.pipe(ms)
 
   var expect = ['foo', 'boo', END]
   ms.on('data', function (c) {
-    t.equal(c, expect.shift())
+    assert.strictEqual(c, expect.shift())
   })
   ms.on('end', function () {
-    t.equal(END, expect.shift())
-    t.end()
+    assert.strictEqual(END, expect.shift())
+    done()
   })
   str.write('foo')
   ms.mute()
@@ -57,18 +58,18 @@ tap.test('incoming', function (t) {
   str.end('grelb')
 })
 
-tap.test('outgoing', function (t) {
+test('outgoing', function (t, done) {
   var ms = new MS()
   var str = new PassThrough()
   ms.pipe(str)
 
   var expect = ['foo', 'boo', END]
   str.on('data', function (c) {
-    t.equal(c, expect.shift())
+    assert.strictEqual(c, expect.shift())
   })
   str.on('end', function () {
-    t.equal(END, expect.shift())
-    t.end()
+    assert.strictEqual(END, expect.shift())
+    done()
   })
 
   ms.write('foo')
@@ -81,55 +82,53 @@ tap.test('outgoing', function (t) {
   ms.end('grelb')
 })
 
-tap.test('isTTY', function (t) {
+test('isTTY', function () {
   var str = new PassThrough()
   str.isTTY = true
   str.columns = 80
   str.rows = 24
 
   var ms = new MS()
-  t.equal(ms.isTTY, false)
-  t.equal(ms.columns, undefined)
-  t.equal(ms.rows, undefined)
+  assert.strictEqual(ms.isTTY, false)
+  assert.strictEqual(ms.columns, undefined)
+  assert.strictEqual(ms.rows, undefined)
   ms.pipe(str)
-  t.equal(ms.isTTY, true)
-  t.equal(ms.columns, 80)
-  t.equal(ms.rows, 24)
+  assert.strictEqual(ms.isTTY, true)
+  assert.strictEqual(ms.columns, 80)
+  assert.strictEqual(ms.rows, 24)
   str.isTTY = false
-  t.equal(ms.isTTY, false)
-  t.equal(ms.columns, 80)
-  t.equal(ms.rows, 24)
+  assert.strictEqual(ms.isTTY, false)
+  assert.strictEqual(ms.columns, 80)
+  assert.strictEqual(ms.rows, 24)
   str.isTTY = true
-  t.equal(ms.isTTY, true)
-  t.equal(ms.columns, 80)
-  t.equal(ms.rows, 24)
+  assert.strictEqual(ms.isTTY, true)
+  assert.strictEqual(ms.columns, 80)
+  assert.strictEqual(ms.rows, 24)
   ms.isTTY = false
-  t.equal(ms.isTTY, false)
-  t.equal(ms.columns, 80)
-  t.equal(ms.rows, 24)
+  assert.strictEqual(ms.isTTY, false)
+  assert.strictEqual(ms.columns, 80)
+  assert.strictEqual(ms.rows, 24)
 
   ms = new MS()
-  t.equal(ms.isTTY, false)
+  assert.strictEqual(ms.isTTY, false)
   str.pipe(ms)
-  t.equal(ms.isTTY, true)
+  assert.strictEqual(ms.isTTY, true)
   str.isTTY = false
-  t.equal(ms.isTTY, false)
+  assert.strictEqual(ms.isTTY, false)
   str.isTTY = true
-  t.equal(ms.isTTY, true)
+  assert.strictEqual(ms.isTTY, true)
   ms.isTTY = false
-  t.equal(ms.isTTY, false)
-
-  t.end()
+  assert.strictEqual(ms.isTTY, false)
 })
 
-tap.test('pause/resume incoming', function (t) {
+test('pause/resume incoming', function () {
   var str = new PassThrough()
   var ms = new MS()
   str.on('pause', function () {
-    t.equal(PAUSE, expect.shift())
+    assert.strictEqual(PAUSE, expect.shift())
   })
   str.on('resume', function () {
-    t.equal(RESUME, expect.shift())
+    assert.strictEqual(RESUME, expect.shift())
   })
   var expect = [PAUSE, RESUME, PAUSE, RESUME]
   str.pipe(ms)
@@ -137,18 +136,17 @@ tap.test('pause/resume incoming', function (t) {
   ms.resume()
   ms.pause()
   ms.resume()
-  t.equal(expect.length, 0, 'saw all events')
-  t.end()
+  assert.strictEqual(expect.length, 0, 'saw all events')
 })
 
-tap.test('replace with *', function (t) {
+test('replace with *', function () {
   var str = new PassThrough()
   var ms = new MS({ replace: '*' })
   str.pipe(ms)
   var expect = ['foo', '*****', 'bar', '***', 'baz', 'boo', '**', '****']
 
   ms.on('data', function (c) {
-    t.equal(c, expect.shift())
+    assert.strictEqual(c, expect.shift())
   })
 
   str.write('foo')
@@ -165,11 +163,10 @@ tap.test('replace with *', function (t) {
   str.write('xy')
   str.write('xyzΩ')
 
-  t.equal(expect.length, 0)
-  t.end()
+  assert.strictEqual(expect.length, 0)
 })
 
-tap.test('replace with ~YARG~', function (t) {
+test('replace with ~YARG~', function () {
   var str = new PassThrough()
   var ms = new MS({ replace: '~YARG~' })
   str.pipe(ms)
@@ -178,7 +175,7 @@ tap.test('replace with ~YARG~', function (t) {
     '~YARG~~YARG~~YARG~~YARG~']
 
   ms.on('data', function (c) {
-    t.equal(c, expect.shift())
+    assert.strictEqual(c, expect.shift())
   })
 
   // also throw some unicode in there, just for good measure.
@@ -196,6 +193,233 @@ tap.test('replace with ~YARG~', function (t) {
   str.write('Ω')
   str.write('ΩΩ')
 
-  t.equal(expect.length, 0)
-  t.end()
+  assert.strictEqual(expect.length, 0)
+})
+test('proxy methods (destroy, destroySoon, close)', function () {
+  // Test with _dest
+  var destCalls = { destroy: 0, destroySoon: 0, close: 0 }
+  var dest = new PassThrough()
+  dest.destroy = function (...args) {
+    destCalls.destroy++
+    assert.deepStrictEqual(args, ['arg1', 'arg2'])
+  }
+  dest.destroySoon = function (...args) {
+    destCalls.destroySoon++
+    assert.deepStrictEqual(args, ['arg3'])
+  }
+  dest.close = function (...args) {
+    destCalls.close++
+    assert.deepStrictEqual(args, [])
+  }
+
+  var ms = new MS()
+  ms.pipe(dest)
+
+  ms.destroy('arg1', 'arg2')
+  assert.strictEqual(destCalls.destroy, 1)
+
+  ms.destroySoon('arg3')
+  assert.strictEqual(destCalls.destroySoon, 1)
+
+  ms.close()
+  assert.strictEqual(destCalls.close, 1)
+
+  // Test with _src
+  var srcCalls = { destroy: 0, destroySoon: 0, close: 0 }
+  var src = new PassThrough()
+  src.destroy = function (...args) {
+    srcCalls.destroy++
+    assert.deepStrictEqual(args, ['srcArg1'])
+  }
+  src.destroySoon = function (...args) {
+    srcCalls.destroySoon++
+    assert.deepStrictEqual(args, [])
+  }
+  src.close = function (...args) {
+    srcCalls.close++
+    assert.deepStrictEqual(args, ['closeArg'])
+  }
+
+  var ms2 = new MS()
+  src.pipe(ms2)
+
+  ms2.destroy('srcArg1')
+  assert.strictEqual(srcCalls.destroy, 1)
+
+  ms2.destroySoon()
+  assert.strictEqual(srcCalls.destroySoon, 1)
+
+  ms2.close('closeArg')
+  assert.strictEqual(srcCalls.close, 1)
+
+  // Test with both _src and _dest - both should be called
+  var bothDestCalls = { destroy: 0 }
+  var bothSrcCalls = { destroy: 0 }
+
+  var bothDest = new PassThrough()
+  bothDest.destroy = function () {
+    bothDestCalls.destroy++
+  }
+
+  var bothSrc = new PassThrough()
+  bothSrc.destroy = function () {
+    bothSrcCalls.destroy++
+  }
+
+  var ms3 = new MS()
+  bothSrc.pipe(ms3)
+  ms3.pipe(bothDest)
+
+  ms3.destroy()
+  assert.strictEqual(bothDestCalls.destroy, 1)
+  assert.strictEqual(bothSrcCalls.destroy, 1)
+
+  // Test with no _src or _dest - should not throw
+  var ms4 = new MS()
+  assert.doesNotThrow(() => {
+    ms4.destroy()
+    ms4.destroySoon()
+    ms4.close()
+  })
+})
+
+test('muted control characters with prompt', function () {
+  // Test with regular prompt
+  var ms = new MS({ replace: '*', prompt: 'prompt> ' })
+  var str = new PassThrough()
+  ms.pipe(str)
+
+  var expect = []
+  str.on('data', function (c) {
+    expect.push(c)
+  })
+
+  ms.mute()
+
+  // Test control character without matching prompt - passed through unchanged
+  ms.write('\u001b[2K')
+  assert.strictEqual(expect.length, 1)
+  assert.strictEqual(expect[0], '\u001b[2K')
+  assert.strictEqual(ms._hadControl, true)
+
+  expect = []
+
+  // Test non-control character after control with prompt
+  ms.write('prompt> world')
+  assert.strictEqual(expect.length, 2)
+  assert.strictEqual(expect[0], 'prompt> ')
+  assert.strictEqual(expect[1], '*****')
+  assert.strictEqual(ms._hadControl, false)
+
+  expect = []
+
+  // Test control character that starts with the prompt (edge case)
+  // This tests the c.indexOf(this._prompt) === 0 branch
+  var ms2 = new MS({ replace: '*', prompt: '\u001b[1m' })
+  var str2 = new PassThrough()
+  ms2.pipe(str2)
+
+  var expect2 = []
+  str2.on('data', function (c) {
+    expect2.push(c)
+  })
+
+  ms2.mute()
+  ms2.write('\u001b[1mhello')
+  assert.strictEqual(expect2.length, 1)
+  assert.strictEqual(expect2[0], '\u001b[1m*****')
+  assert.strictEqual(ms2._hadControl, true)
+})
+
+test('end method with muted and replace', function (t, done) {
+  var ms = new MS({ replace: '*' })
+  var str = new PassThrough()
+  ms.pipe(str)
+
+  var dataEvents = []
+  var endCalled = false
+
+  str.on('data', function (c) {
+    dataEvents.push(c)
+  })
+  str.on('end', function () {
+    endCalled = true
+    // When muted with replace: content should be replaced
+    assert.strictEqual(dataEvents.length, 1)
+    assert.strictEqual(dataEvents[0], '*****')
+    assert.strictEqual(endCalled, true)
+    done()
+  })
+
+  ms.mute()
+  ms.end('hello')
+})
+
+test('end method with muted but no replace', function (t, done) {
+  var ms = new MS()
+  var str = new PassThrough()
+  ms.pipe(str)
+
+  var dataEvents = []
+  var endCalled = false
+
+  str.on('data', function (c) {
+    dataEvents.push(c)
+  })
+  str.on('end', function () {
+    endCalled = true
+    // When muted without replace: c becomes null, no data event
+    assert.strictEqual(dataEvents.length, 0)
+    assert.strictEqual(endCalled, true)
+    done()
+  })
+
+  ms.mute()
+  ms.end('hello')
+})
+
+test('end method when not muted', function (t, done) {
+  var ms = new MS({ replace: '*' })
+  var str = new PassThrough()
+  ms.pipe(str)
+
+  var dataEvents = []
+  var endCalled = false
+
+  str.on('data', function (c) {
+    dataEvents.push(c)
+  })
+  str.on('end', function () {
+    endCalled = true
+    // When not muted: content passes through unchanged
+    assert.strictEqual(dataEvents.length, 1)
+    assert.strictEqual(dataEvents[0], 'hello')
+    assert.strictEqual(endCalled, true)
+    done()
+  })
+
+  ms.end('hello')
+})
+
+test('end method with no content', function (t, done) {
+  var ms = new MS({ replace: '*' })
+  var str = new PassThrough()
+  ms.pipe(str)
+
+  var dataEvents = []
+  var endCalled = false
+
+  str.on('data', function (c) {
+    dataEvents.push(c)
+  })
+  str.on('end', function () {
+    endCalled = true
+    // When no content provided: no data event
+    assert.strictEqual(dataEvents.length, 0)
+    assert.strictEqual(endCalled, true)
+    done()
+  })
+
+  ms.mute()
+  ms.end()
 })
