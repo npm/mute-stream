@@ -4,7 +4,7 @@
   "main": "lib/index.js",
   "devDependencies": {
     "@npmcli/eslint-config": "^6.0.0",
-    "@npmcli/template-oss": "4.29.0"
+    "@npmcli/template-oss": "4.30.0"
   },
   "scripts": {
     "test": "node --test './test/**/*.js'",
