@@ -1,5 +1,22 @@
 # Changelog
 
+## [4.0.0](https://github.com/npm/mute-stream/compare/v3.0.0...v4.0.0) (2026-05-08)
+### ⚠️ BREAKING CHANGES
+* `mute-stream` now supports node `^22.22.2 || ^24.15.0 || >=26.0.0`
+* template-oss-apply
+### Features
+* [`dd8f248`](https://github.com/npm/mute-stream/commit/dd8f2485873a6ed86a03f0052363ad99f2a9dcd4) [#104](https://github.com/npm/mute-stream/pull/104) bump to new node engine range (@owlstronaut)
+* [`32060f6`](https://github.com/npm/mute-stream/commit/32060f612dbef177209506351f370c2755d20ebe) [#104](https://github.com/npm/mute-stream/pull/104) template-oss-apply (@owlstronaut)
+### Chores
+* [`0953361`](https://github.com/npm/mute-stream/commit/0953361ea5f710d6b2d2df66d5a3991b85de4e8f) [#104](https://github.com/npm/mute-stream/pull/104) template-oss-apply (@owlstronaut)
+* [`36efa3d`](https://github.com/npm/mute-stream/commit/36efa3d7dcd1327bf647e9b6f834d9aa85215f15) [#102](https://github.com/npm/mute-stream/pull/102) Bump @npmcli/template-oss from 4.29.0 to 4.30.0 (#102) (@dependabot[bot], @npm-cli-bot)
+* [`e2c1d9e`](https://github.com/npm/mute-stream/commit/e2c1d9eab9a91bd8f7dc63edc87c0917b229a502) [#101](https://github.com/npm/mute-stream/pull/101) Bump @npmcli/template-oss from 4.28.1 to 4.29.0 (#101) (@dependabot[bot], @npm-cli-bot)
+* [`3a2feca`](https://github.com/npm/mute-stream/commit/3a2fecae73165fd9df3adf72d2ab064d15e3411f) [#99](https://github.com/npm/mute-stream/pull/99) remove tap (@owlstronaut)
+* [`3c00b79`](https://github.com/npm/mute-stream/commit/3c00b795c391b4e2e7fcf76a8210c309797b54ba) [#99](https://github.com/npm/mute-stream/pull/99) swap from tap to built-in node:test (@owlstronaut)
+* [`d2e3afa`](https://github.com/npm/mute-stream/commit/d2e3afac94bc9269411cf9fc0256f5d40fd5da3f) [#98](https://github.com/npm/mute-stream/pull/98) Bump @npmcli/template-oss from 4.28.0 to 4.28.1 (#98) (@dependabot[bot], @npm-cli-bot)
+* [`e3bb705`](https://github.com/npm/mute-stream/commit/e3bb7051fc80ca80d8e5c756227c9c084eb31a2c) [#97](https://github.com/npm/mute-stream/pull/97) Bump @npmcli/template-oss from 4.27.1 to 4.28.0 (#97) (@dependabot[bot], @npm-cli-bot)
+* [`e6e4088`](https://github.com/npm/mute-stream/commit/e6e40882a81d996336273c7bae493a5e99758985) [#96](https://github.com/npm/mute-stream/pull/96) Bump @npmcli/eslint-config from 5.1.0 to 6.0.0 (#96) (@dependabot[bot])
+
 ## [3.0.0](https://github.com/npm/mute-stream/compare/v2.0.0...v3.0.0) (2025-10-22)
 ### ⚠️ BREAKING CHANGES
 * align to npm 11 node engine range (#94)
